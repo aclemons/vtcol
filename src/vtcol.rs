@@ -364,9 +364,9 @@ nibble_of_char
     -> u8
 {
     match chr as char {
-        '0' ... '9' => { chr - '0' as u8 },
-        'a' ... 'f' => { chr - 'a' as u8 + 10 },
-        'A' ... 'F' => { chr - 'A' as u8 + 10 },
+        '0'..='9' => { chr - '0' as u8 },
+        'a'..='f' => { chr - 'a' as u8 + 10 },
+        'A'..='F' => { chr - 'A' as u8 + 10 },
         _ => 0
     }
 }
@@ -424,7 +424,7 @@ impl Palette {
 
     pub fn
     from_buffered_reader
-    (reader : &mut std::io::BufRead)
+    (reader : &mut dyn std::io::BufRead)
         -> Palette
     {
         let mut pal_idx : usize = 0_usize;
@@ -438,7 +438,7 @@ impl Palette {
                 if let Some(off) = line.find('#') {
                     if off != 0_usize {
                         /* Palette index specified, number prepended */
-                        let str_idx = unsafe { line.slice_unchecked(0_usize, off) };
+                        let str_idx = unsafe { line.get_unchecked(0_usize..off) };
                         let parse_res : Result<usize, _>
                             = std::str::FromStr::from_str(str_idx);
                         match parse_res {
